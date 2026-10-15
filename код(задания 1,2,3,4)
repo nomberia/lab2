@@ -1,0 +1,213 @@
+#include <iostream>
+#include <string>
+
+int main() {
+    // Настройка вывода кириллицы в консоли (для Windows)
+    setlocale(LC_ALL, "Russian");
+
+    int task_number = -1;
+
+    while (task_number != 0) {
+        std::cout << "\n=========================================\n";
+        std::cout << "Выберите задание для выполнения (Вариант 11):\n";
+        std::cout << "1 - Задание 1 (Расчет штрафа)\n";
+        std::cout << "2 - Задание 2 (Штраф за потерю/просрочку книги)\n";
+        std::cout << "3 - Задание 3 (Расчет по коду материала)\n";
+        std::cout << "4 - Задание 4 (Комплексный расчет штрафа и сборов)\n";
+        std::cout << "0 - Выход из программы\n";
+        std::cout << "Введите номер: ";
+        std::cin >> task_number;
+        std::cout << "=========================================\n\n";
+
+        if (task_number == 0) {
+            std::cout << "Программа завершена." << std::endl;
+            break;
+        }
+
+        switch (task_number) {
+        case 1: {
+            int days;
+            int is_student;
+
+            std::cout << "[Задание 1] Введите количество дней просрочки: ";
+            std::cin >> days;
+            std::cout << "[Задание 1] Студент? (1 - да, 0 - нет): ";
+            std::cin >> is_student;
+
+            if (days < 0) {
+                std::cout << "Ошибка: просрочка не может быть отрицательной." << std::endl;
+                break;
+            }
+
+            double fine = 0.0;
+
+            if (days <= 7) {
+                fine = days * 0.5;
+            }
+            else if (days <= 30) {
+                fine = (7 * 0.5) + (days - 7) * 1.0;
+            }
+            else {
+                fine = (7 * 0.5) + (23 * 1.0) + (days - 30) * 2.0;
+            }
+
+            if (is_student == 1) {
+                fine *= 0.5;
+            }
+
+            std::cout << "Итоговый штраф: " << fine << std::endl;
+            break;
+        }
+
+        case 2: {
+            int days;
+            int is_lost;
+            int is_student;
+
+            std::cout << "[Задание 2] Введите число дней просрочки: ";
+            std::cin >> days;
+            std::cout << "[Задание 2] Книга потеряна? (1 - да, 0 - нет): ";
+            std::cin >> is_lost;
+            std::cout << "[Задание 2] Студент? (1 - да, 0 - нет): ";
+            std::cin >> is_student;
+
+            if (days < 0) days = 0;
+
+            double fine = 0.0;
+            std::string reason;
+
+            if (is_lost == 1) {
+                fine = 30.0;
+                reason = "Потеря книги";
+            }
+            else {
+                reason = "Просрочка возврата";
+                if (days <= 10) {
+                    fine = days * 0.5;
+                }
+                else {
+                    fine = (10 * 0.5) + (days - 10) * 1.0;
+                }
+
+                if (is_student == 1) {
+                    fine *= 0.5;
+                }
+            }
+
+            std::cout << "\n--- Результат ---" << std::endl;
+            std::cout << "Причина: " << reason << std::endl;
+            std::cout << "Сумма штрафа: " << fine << std::endl;
+            break;
+        }
+
+        case 3: {
+            char type;
+            int days;
+
+            std::cout << "[Задание 3] Введите код материала (B - книга, M - журнал, D - диск): ";
+            std::cin >> type;
+            std::cout << "[Задание 3] Введите число дней просрочки: ";
+            std::cin >> days;
+
+            if (days < 0) {
+                std::cout << "Ошибка: отрицательная просрочка." << std::endl;
+                break;
+            }
+
+            double rate = 0.0;
+            bool valid_code = true;
+            switch (type) {
+case 'B': case 'b': rate = 0.5; break;
+case 'M': case 'm': rate = 0.8; break;
+case 'D': case 'd': rate = 1.2; break;
+default: valid_code = false; break;
+}
+
+if (!valid_code) {
+    std::cout << "Ошибка: неизвестный код материала." << std::endl;
+    break;
+}
+
+double fine = days * rate;
+
+if (days > 30) {
+    fine *= 1.25;
+}
+
+std::cout << "Итоговый штраф: " << fine << std::endl;
+break;
+            }
+
+            case 4: {
+                char type;
+                int days;
+                int is_lost;
+                int is_student;
+
+                std::cout << "[Задание 4] Введите код материала (B/M/D): ";
+                std::cin >> type;
+                std::cout << "[Задание 4] Введите дни просрочки: ";
+                std::cin >> days;
+                std::cout << "[Задание 4] Признак потери (1 - да, 0 - нет): ";
+                std::cin >> is_lost;
+                std::cout << "[Задание 4] Признак студента (1 - да, 0 - нет): ";
+                std::cin >> is_student;
+
+                if (days < 0) days = 0;
+
+                double rate = 0.0;
+                double fixed_lost_fine = 0.0;
+                std::string type_name;
+                bool valid_code = true;
+
+                switch (type) {
+                case 'B': case 'b': rate = 0.5; fixed_lost_fine = 25.0; type_name = "Книга"; break;
+                case 'M': case 'm': rate = 0.8; fixed_lost_fine = 35.0; type_name = "Журнал"; break;
+                case 'D': case 'd': rate = 1.2; fixed_lost_fine = 50.0; type_name = "Диск"; break;
+                default: valid_code = false; break;
+                }
+
+                if (!valid_code) {
+                    std::cout << "Ошибка: неверный код материала." << std::endl;
+                    break;
+                }
+
+                double total_fine = 0.0;
+                std::string scenario;
+
+                if (is_lost == 1) {
+                    total_fine = fixed_lost_fine;
+                    scenario = "Материал (" + type_name + ") утерян. Начислен фиксированный штраф.";
+                }
+                else {
+                    total_fine = days * rate;
+                    scenario = "Просрочка (" + type_name + "). ";
+
+                    if (is_student == 1) {
+                        total_fine *= 0.5;
+                        scenario += "Применена студенческая скидка 50%. ";
+                    }
+                    else {
+                        scenario += "Без студенческой скидки. ";
+                    }
+
+                    if (days > 20) {
+                        total_fine += 5.0;
+                        scenario += "Добавлен фиксированный сбор 5 за просрочку свыше 20 дней.";
+                    }
+                }
+
+                std::cout << "\n--- Отчет ---" << std::endl;
+                std::cout << "Выбранный сценарий: " << scenario << std::endl;
+                std::cout << "Итого к оплате: " << total_fine << std::endl;
+                break;
+            }
+
+            default:
+                std::cout << "Неверный ввод! Пожалуйста, выберите число от 0 до 4." << std::endl;
+                break;
+        }
+    }
+
+    return 0;
+}
